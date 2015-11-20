@@ -1,0 +1,21 @@
+{
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"AngularJS (CoffeeScript)",
+		"Better CoffeeScript",
+		"CoffeeComplete Plus (Autocompletion)",
+		"LESS",
+		"Markdown Extended",
+		"Mocha Coffee Snippets",
+		"Package Control",
+		"Pretty JSON",
+		"SublimeLinter",
+		"SublimeLinter-coffeelint",
+		"Theme - Afterglow",
+		"Theme - Spacegray",
+		"WakaTime"
+	]
+}

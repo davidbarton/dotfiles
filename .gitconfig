@@ -1,0 +1,16 @@
+[user]
+	name = David Barton
+	email = david.barton@posteo.de
+[color]
+	ui = true
+[push]
+	default = current
+[branch]
+	autosetuprebase = always
+[alias]
+	tree = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	l = log --pretty=format:\"%Cgreen%h%Creset %ad %C(cyan)%an%Creset - %s%C(red)%d%Creset\" --date=short
+	ll = log --pretty=format:\"%Cgreen%h%Creset %ad %C(cyan)%an%Creset - %s%C(red)%d%Creset\" --graph --date=short --all
+[core]
+	pager = less -x1,3
+	editor = vim

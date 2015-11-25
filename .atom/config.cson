@@ -1,0 +1,37 @@
+"*":
+  "exception-reporting":
+    userId: "6896fa34-d71d-a14b-0b68-8310b4034f58"
+  welcome:
+    showOnStartup: false
+  core:
+    autoHideMenuBar: true
+    themes: [
+      "seti-ui"
+      "monokai"
+    ]
+    disabledPackages: [
+      "linter-swiftc"
+      "metrics"
+      "welcome"
+      "exception-reporting"
+      "autocomplete-php"
+    ]
+  editor:
+    invisibles: {}
+    fontFamily: "Source Code Pro"
+    showIndentGuide: true
+    fontSize: 13
+  "one-dark-ui": {}
+  linter: {}
+  "linter-bootlint": {}
+  "linter-csslint": {}
+  "linter-eslint":
+    disableWhenNoEslintrcFileInPath: true
+  "linter-jsonlint": {}
+  "autocomplete-python": {}
+  minimap: {}
+  autosave:
+    enabled: true
+  "save-session":
+    dataSaveFolder: "/home/archie/.atom/packages/save-session/projects"
+  "highlight-selected": {}

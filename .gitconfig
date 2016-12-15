@@ -1,6 +1,7 @@
 [user]
 	name = David Barton
 	email = david.barton@posteo.de
+	signingkey = A43284A611D1E806
 [color]
 	ui = true
 [push]
@@ -14,3 +15,7 @@
 [core]
 	pager = less -x1,3
 	editor = vim
+[commit]
+	gpgsign = true
+[log]
+	showSignature = false

@@ -11,5 +11,6 @@ PS1='[\u@\h \W]\$ '
 # Firefox add $VISUAL
 export VISUAL="vim"
 
-# Go Version Manager
-\n[[ -s "/home/archie/.gvm/scripts/gvm" ]] && source "/home/archie/.gvm/scripts/gvm"
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm

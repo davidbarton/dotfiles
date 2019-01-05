@@ -19,3 +19,7 @@
 	gpgsign = true
 [log]
 	showSignature = false
+[gpg]
+        program = gpg2
+[rerere]
+        enabled = true

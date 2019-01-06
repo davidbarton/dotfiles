@@ -1,0 +1,39 @@
+{
+  // THEMES
+  "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
+  "workbench.iconTheme": "Monokai Pro (Filter Spectrum) Icons",
+  // VSCODE INTERNALS
+  "telemetry.enableTelemetry": false,
+  "telemetry.enableCrashReporter": false,
+  // VSCODE GENERAL
+  "window.title": "${activeEditorLong}${separator}${rootName}",
+  "extensions.ignoreRecommendations": false,
+  // EDITOR GENERAL
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "editor.renderWhitespace": "none",
+  "editor.formatOnSave": true,
+  "[yaml]": {
+    "editor.formatOnSave": false
+  },
+  "[python]": {
+    "editor.formatOnSave": false
+  },
+  // PYTHON ONLY
+  "python.pythonPath": "/Users/archie/.pyenv/versions/3.6.6/bin/python",
+  "python.linting.lintOnSave": true,
+  "python.linting.pylintEnabled": true,
+  "python.formatting.provider": "yapf",
+  // JS ONLY
+  "javascript.updateImportsOnFileMove.enabled": "never",
+  "javascript.validate.enable": false,
+  "flow.useNPMPackagedFlow": true,
+  // GIT ONLY
+  "gitlens.keymap": "chorded",
+  "gitlens.codeLens.enabled": false,
+  "gitlens.advanced.messages": {
+    "suppressShowKeyBindingsNotice": true
+  }
+}

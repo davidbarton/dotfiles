@@ -1,0 +1,21 @@
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "cmd+k",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "shift+cmd+k",
+    "command": "workbench.action.showCommands"
+  },
+  {
+    "key": "cmd+k",
+    "command": "workbench.action.quickOpenNavigateNextInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    "key": "shift+cmd+k",
+    "command": "workbench.action.quickOpenNavigatePreviousInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  }
+]

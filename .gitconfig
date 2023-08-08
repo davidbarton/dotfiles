@@ -1,0 +1,38 @@
+[user]
+	name = David Barton
+	email = 1619732+davidbarton@users.noreply.github.com
+	signingkey = ~/.ssh/id_ed25519.pub
+[color]
+	ui = auto
+[fetch]
+	prune = true
+[push]
+	default = current
+[init]
+	defaultBranch = main
+[branch]
+	autosetuprebase = always
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[alias]
+	tree = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	l = log --pretty=format:\"%Cgreen%h%Creset %ad %C(cyan)%an%Creset - %s%C(red)%d%Creset\" --date=short
+	ll = log --pretty=format:\"%Cgreen%h%Creset %ad %C(cyan)%an%Creset - %s%C(red)%d%Creset\" --graph --date=short --all
+	tracked = ls-tree --full-tree -r --name-only HEAD
+	delete-local-merged = "!git fetch && git branch --merged | egrep -v 'master' | xargs git branch -d"
+[core]
+	pager = less -x1,3
+	editor = vim
+	excludesFile = ~/.gitignore_global
+[rerere]
+        enabled = true
+[log]
+	showSignature = false
+[commit]
+	gpgsign = true
+[gpg]
+        program = gpg2
+	format = ssh

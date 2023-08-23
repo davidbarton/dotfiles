@@ -5,7 +5,7 @@
 # existing files that would be overwritten.
 
 # Set git clone arguments to first script argument.
-DOTFILES_GIT_CLONE_ARGS=$1
+DOTFILES_GIT_CLONE_ARGS="$1"
 
 # Exit with error if git clone arguments are empty.
 if [ -z "$DOTFILES_GIT_CLONE_ARGS" ]; then
@@ -28,7 +28,7 @@ DOTFILES_WORK_TREE_PATH=$HOME
 # Define function for dotfiles. Use git command with
 # custom work tree and .git directory paths set.
 function dotfiles {
-  git --work-tree=$DOTFILES_WORK_TREE_PATH --git-dir=$DOTFILES_GIT_PATH $@
+  git --work-tree=$DOTFILES_WORK_TREE_PATH --git-dir=$DOTFILES_GIT_PATH "$@"
 }
 
 # Jump to work tree directory.

@@ -37,3 +37,10 @@
    dotfiles add .gitconfig
    dotfiles commit -m "Add .gitconfig"
    ```
+
+## Code style and lint
+
+- https://google.github.io/styleguide/shellguide.html
+- https://bertvv.github.io/cheat-sheets/Bash.html
+- https://github.com/koalaman/shellcheck
+- https://github.com/bernardpaulus/bash_unittest

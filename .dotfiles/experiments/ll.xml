@@ -1,0 +1,14 @@
+<!-- Add this to ~/Library/LaunchAgents -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>local.dotfiles.backup.auto</string>
+		<key>Program</key>
+		<string>~/.dotfiles/scripts/backup.sh</string>
+		<key>StartInterval</key>
+    <integer>3600</integer>
+	</dict>
+</plist>

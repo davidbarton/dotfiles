@@ -1,0 +1,9 @@
+# Run as shellcheck --check-sourced --external-sources --severity=style Code/dotfiles/.dotfiles/scripts/checkout_stash_conflicts.sh
+
+check-sourced=true
+external-sources=true
+source-path=.
+shell=bash
+severity=style
+enable=all
+disable=SC2312

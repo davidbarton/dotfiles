@@ -1,0 +1,44 @@
+{
+  // THEMES
+  "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
+  "workbench.iconTheme": "Monokai Pro (Filter Spectrum) Icons",
+  // GENERAL
+  "telemetry.telemetryLevel": "off",
+  "workbench.startupEditor": "welcomePage",
+  "window.title": "${activeEditorLong}${separator}${rootName}",
+  "window.zoomLevel": 1,
+  // TERMINAL
+  "terminal.external.osxExec": "iTerm.app",
+  // EDITOR
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.rulers": [50, 80, 120],
+  "editor.largeFileOptimizations": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[plaintext]": {
+    "editor.formatOnSave": false
+  },
+  "[yaml]": {
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.formatOnSave": false
+  },
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
+  // EXTENSIONS
+  "python.formatting.provider": "black",
+  "redhat.telemetry.enabled": false,
+  "jest.autoRun": "off",
+  "gitlens.hovers.currentLine.over": "line",
+  "markdown-preview-github-styles.colorTheme": "light",
+  "Notes.notesLocation": "~/Library/Mobile Documents/com~apple~CloudDocs/Work Notes",
+  "cSpell.showStatus": false
+}

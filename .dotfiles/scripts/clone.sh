@@ -195,7 +195,7 @@ Unstash changes:
 \n" "${stash_reflog_selector}" "${stash_reflog_selector}"
     fi
   fi
-} 
+}
 
 # Main function for cloning dotfiles repository.
 function main {

@@ -6,14 +6,9 @@ source "$(dirname "$(readlink -f "$0")")/clone.sh"
 # Error on unset variables.
 set -u
 
-# Apply stash with given name.
-function apply_stash() {
-  my_dotfiles stash apply "$(get_stash_selector "$1")"
-}
-
 # Main function for applying stashed changes.
 function main() {
-  apply_stash "$1"
+  checkout_with_backup "$1"
 }
 
 # Run main function if script is executed and not sourced.

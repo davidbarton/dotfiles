@@ -4,6 +4,9 @@
 # repository. It takes care of preserving any
 # existing files that would be overwritten.
 
+# Error on unset variables.
+set -u
+
 # Return 0 (0 is considered true in bash) if variable is set and not false.
 function is_set_and_not_false() {
   if [[ -n "$1" ]] && [[ "$1" != "false" ]]; then
@@ -13,43 +16,63 @@ function is_set_and_not_false() {
   fi
 }
 
+# Abort the script with an error message.
+function abort() {
+  printf "%s\n" "$@" >&2
+  exit 1
+}
+
+# Log message if DOTFILES_QUIET is not set.
+function log_message() {
+  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
+    printf "%s\n" "$@"
+  fi
+}
+
+# Log all commands if CI environment variable is set.
+function log_commands() {
+  if is_set_and_not_false "${CI}"; then
+    set -x
+  fi
+}
+
 # Execute dotfiles command with args.
-function my_dotfiles {
+function my_dotfiles() {
   git --work-tree="${DOTFILES_WORK_TREE_PATH}" --git-dir="${DOTFILES_GIT_PATH}" "$@"
 }
 
 # Command to get reflog selector for git stash with given name.
-function get_stash_selector {
+function get_stash_selector() {
   my_dotfiles stash list | grep --max-count 1 "$1" | cut -d: -f1
 }
 
 # Function to clone dotfiles repository.
-function clone_repository {
+function clone_repository() {
   # Inform user about clone.
-  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-    printf "Cloning repository %s\n" "${DOTFILES_GIT_CLONE_URL}"
+  log_message "Cloning repository ${DOTFILES_GIT_CLONE_URL}"
+
+  # Exit with error if git is not installed.
+  if ! command -v git &> /dev/null; then
+    abort "Error: The git command is not installed. Aborting dotfiles clone."
   fi
 
   # Exit with error if git clone arguments are empty.
   if [[ -z ${DOTFILES_GIT_CLONE_URL} ]]; then
-    printf "Error: Repository URL not provided. Aborting dotfiles clone.\n" >&2
-    exit 1
+    abort "Error: Repository URL not provided. Aborting dotfiles clone."
   fi
 
   # Exit with error if work tree directory does not exists.
   if [[ ! -d ${DOTFILES_WORK_TREE_PATH} ]]; then
-    printf "Error: Work tree directory %s does not exist. Aborting dotfiles clone.\n" "${DOTFILES_WORK_TREE_PATH}" >&2
-    exit 1
+    abort "Error: Work tree directory ${DOTFILES_WORK_TREE_PATH} does not exist. Aborting dotfiles clone."
   fi
 
   # Exit with error if project directory already exists.
   if [[ -d ${DOTFILES_PROJECT_PATH} ]]; then
-    printf "Error: Dotfiles project directory %s already exists. Aborting dotfiles clone.\n" "${DOTFILES_PROJECT_PATH}" >&2
-    exit 1
+    abort "Error: Dotfiles project directory ${DOTFILES_PROJECT_PATH} already exists. Aborting dotfiles clone."
   fi
 
   # Jump to work tree directory.
-  cd "${DOTFILES_WORK_TREE_PATH}" || exit
+  cd "${DOTFILES_WORK_TREE_PATH}" || abort "Error: Could not change directory to ${DOTFILES_WORK_TREE_PATH}. Aborting dotfiles clone."
 
   # Clone repository with --bare flag.
   git clone \
@@ -65,36 +88,29 @@ function clone_repository {
 }
 
 # Function to setup tracking remote branches.
-function track_remote {
+function track_remote() {
   # Inform user about remote tracking.
-  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-    printf "Fixing tracking for %s remote\n" "${DOTFILES_ORIGIN}"
-  fi
+  log_message "Fixing branch tracking for $1 remote"
 
   # Remove existing remote.
-  my_dotfiles remote remove "${DOTFILES_ORIGIN}" > /dev/null 2>&1
+  my_dotfiles remote remove "$1" > /dev/null 2>&1
 
   # Re-add origin remote. It now has proper branch tracking.
-  my_dotfiles remote add "${DOTFILES_ORIGIN}" "${DOTFILES_GIT_CLONE_URL}" > /dev/null 2>&1
+  my_dotfiles remote add "$1" "$2" > /dev/null 2>&1
 
   # Fetch all branches.
   my_dotfiles fetch --all --quiet
 }
 
 # Function to checkout git files. Tries to backup any conflicts.
-function checkout_with_backup {
+function checkout_with_backup() {
   # Inform user about backup.
-  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-    printf "Trying to checkout %s branch\n" "$@"
-  fi
+  log_message "Trying to checkout $* branch"
 
   # Try to quietly checkout files from repository. Run backup if checkout failed.
   if ! my_dotfiles checkout "$@" > /dev/null 2>&1; then
-
     # Inform user about backup.
-    if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-      printf "Backing up conflicting files to %s\n" "${DOTFILES_BACKUP_PATH}"
-    fi
+    log_message "Backing up conflicting files to ${DOTFILES_BACKUP_PATH}"
 
     # Save list of conflict files for backup.
     local backup_files
@@ -114,17 +130,15 @@ function checkout_with_backup {
       | xargs -I{} mv "${DOTFILES_WORK_TREE_PATH}"/{} "${DOTFILES_BACKUP_PATH}"/{}
 
     # Inform user about backed up files.
-    if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
+    log_message "$(
       printf "%s\n" "${backup_files}" \
-        | xargs -I{} printf "  %s\n" "${DOTFILES_BACKUP_PATH}"/{}
-    fi
+        | xargs -I{} printf "  %s\n" "${DOTFILES_BACKUP_PATH}/{}"
+    )"
 
     # Try to checkout files from repository again. Report error if checkout failed again.
     if ! my_dotfiles checkout --quiet "$@"; then
-
       # Inform user about backup failure.
-      printf "Error: Backup of existing files failed. Aborting dotfiles checkout.\n" >&2
-      exit 1
+      abort "Error: Backup of existing files failed. Aborting dotfiles checkout."
     fi
 
     # Restore backup files.
@@ -133,34 +147,29 @@ function checkout_with_backup {
 }
 
 # Function for restoring backup files.
-function restore_backup {
+function restore_backup() {
   # Inform user about restore.
-  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-    printf "Restoring conflicting files to %s\n" "${DOTFILES_WORK_TREE_PATH}"
-  fi
+  log_message "Restoring conflicting files to ${DOTFILES_WORK_TREE_PATH}"
 
   # Create restore directory structure.
-  printf "%s\n" "${backup_files}" \
+  printf "%s\n" "$1" \
     | xargs -I{} dirname "${DOTFILES_WORK_TREE_PATH}"/{} \
     | xargs -I{} mkdir -p {}
 
   # Move existing files to restore directory.
-  printf "%s\n" "${backup_files}" \
+  printf "%s\n" "$1" \
     | xargs -I{} mv "${DOTFILES_BACKUP_PATH}"/{} "${DOTFILES_WORK_TREE_PATH}"/{}
 
   # Inform user about restored files.
-  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-    printf "%s\n" "${backup_files}" \
+  log_message "$(
+    printf "%s\n" "$1" \
       | xargs -I{} printf "  %s\n" "${DOTFILES_WORK_TREE_PATH}"/{}
-  fi
+  )"
 
   # Remove backup directory.
   if ! is_set_and_not_false "${DOTFILES_KEEP_BACKUP}"; then
-
     # Inform user about removing backup directory.
-    if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-      printf "Removing backup directory %s\n" "${DOTFILES_BACKUP_PATH}"
-    fi
+    log_message "Removing backup directory ${DOTFILES_BACKUP_PATH}"
 
     # Remove backup directory.
     rm -rf "${DOTFILES_BACKUP_PATH}"
@@ -168,53 +177,55 @@ function restore_backup {
 }
 
 # Function for stashing changes.
-function stash_changes {
+function stash_changes() {
   # Stash changes to tracked files.
-  my_dotfiles stash push --quiet --no-keep-index --message "${DOTFILES_BACKUP_NAME}"
+  my_dotfiles stash push --quiet --no-keep-index --message "$1"
 
   # Get reflog selector for this stash.
   local stash_reflog_selector
-  stash_reflog_selector=$(get_stash_selector "${DOTFILES_BACKUP_NAME}")
+  stash_reflog_selector=$(get_stash_selector "$1")
 
+  # Continue only if new stash was created.
   if [[ -n "${stash_reflog_selector}" ]]; then
-    if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-      # Inform user about stashing changes.
-      printf "Stashing changes to %s\n" "${DOTFILES_BACKUP_NAME}"
+    # Inform user about stashing changes.
+    log_message "Stashing changes to $1"
 
-      # Print list of stashed files.
+    # Inform user about stashed files.
+    log_message "$(
       my_dotfiles stash show --include-untracked --name-only "${stash_reflog_selector}" \
         | xargs -I{} printf "  %s\n" {}
+    )"
 
-      # Print instructions how to view stashed diff and how to unstash it.
-      printf "
+    # Print instructions how to view stashed diff and how to unstash it.
+    log_message "
 Show stashed changes:
-    dotfiles stash show --patch %s
+    dotfiles stash show --patch ${stash_reflog_selector}
 
 Unstash changes:
-    dotfiles stash apply %s
-\n" "${stash_reflog_selector}" "${stash_reflog_selector}"
-    fi
+    dotfiles stash apply ${stash_reflog_selector}
+"
   fi
 }
 
 # Main function for cloning dotfiles repository.
-function main {
+function main() {
+  # Setup logging for CI environment.
+  log_commands
+
   # Clone dotfiles repository.
   clone_repository
 
   # Track remote branches.
-  track_remote
+  track_remote "${DOTFILES_ORIGIN}" "${DOTFILES_GIT_CLONE_URL}"
 
   # Checkout files (with backup and restore if needed).
   checkout_with_backup "${DOTFILES_CHECKOUT_BRANCH}"
 
   # Stash changes to any tracked files.
-  stash_changes
+  stash_changes "${DOTFILES_BACKUP_NAME}"
 
   # Inform user about success.
-  if ! is_set_and_not_false "${DOTFILES_QUIET}"; then
-    printf "Succesfully cloned dotfiles repository\n"
-  fi
+  log_message "Succesfully cloned dotfiles repository"
 }
 
 # Set CI environment variable to false (if not set).
@@ -258,12 +269,5 @@ DOTFILES_KEEP_BACKUP="${DOTFILES_KEEP_BACKUP:-"false"}"
 
 # Run main function if script is executed and not sourced.
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-
-  # Log all commands if CI environment variable is set.
-  if is_set_and_not_false "${CI}"; then
-    set -x
-  fi
-
-  # Run main function.
   main
 fi

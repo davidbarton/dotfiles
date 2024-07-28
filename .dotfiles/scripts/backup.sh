@@ -3,8 +3,11 @@
 # Import useful stuff from clone script.
 source "$(dirname "$(readlink -f "$0")")/clone.sh"
 
+# Error on unset variables.
+set -u
+
 # Backup all changes to tracked files to backup remote.
-function backup_changes {
+function backup_changes() {
   # Checkout git branch for backups.
   my_dotfiles checkout "$2" || dotfiles checkout -b "$2"
 
@@ -16,7 +19,7 @@ function backup_changes {
 }
 
 # Main function for backup.
-function main {
+function main() {
   backup_changes "${DOTFILES_BACKUP_REMOTE}" "${DOTFILES_BACKUP_BRANCH}"
 }
 

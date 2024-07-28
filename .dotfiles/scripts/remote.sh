@@ -3,8 +3,11 @@
 # Import useful stuff from clone script.
 source "$(dirname "$(readlink -f "$0")")/clone.sh"
 
+# Error on unset variables.
+set -u
+
 # Main function for setting remotes.
-function main {
+function main() {
   track_remote "origin" "git@github.com:davidbarton/dotfiles.git"
   track_remote "backup" "git@github.com:davidbarton/dotfiles-backup.git"
   track_remote "work" "git@github.com:davidbarton/dotfiles-work.git"
